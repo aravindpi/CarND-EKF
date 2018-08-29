@@ -3,6 +3,8 @@
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
+#define TOLERANCE 0.0001
+
 // Please note that the Eigen library does not initialize 
 // VectorXd or MatrixXd objects with zeros upon creation.
 
@@ -22,21 +24,66 @@ void KalmanFilter::Init(VectorXd &x_in, MatrixXd &P_in, MatrixXd &F_in,
 
 void KalmanFilter::Predict() {
   /**
-  TODO:
-    * predict the state
-  */
+   * predict the state
+   */
+
+  x_ = F_ * x_;
+  P_ = F_* P_ * F_.transpose() + Q_;
 }
 
 void KalmanFilter::Update(const VectorXd &z) {
   /**
-  TODO:
-    * update the state by using Kalman Filter equations
-  */
+   * update the state by using Kalman Filter equations
+   */
+
+  VectorXd y = z - (H_ * x_);
+  MatrixXd S = H_*P_*(H_.transpose()) + R_;
+  MatrixXd K = P_*(H_.transpose()) * (S.inverse());
+
+  x_ = x_ + (K*y);
+  MatrixXd I = MatrixXd::Identity(x_.size(), x_.size());
+  P_ = (I - K*H_) * P_;
+  
 }
 
 void KalmanFilter::UpdateEKF(const VectorXd &z) {
   /**
-  TODO:
-    * update the state by using Extended Kalman Filter equations
-  */
-}
+   * update the state by using Extended Kalman Filter equations
+   */
+
+  float x0 = x_(0);
+  float x1 = x_(1);
+
+  float rho = sqrt(pow(x0,2) + pow(x1,2));
+  float phi = atan2(x1, x0);
+  float rhoDot;
+
+  if( fabs(rho) < TOLERANCE) {
+    rhoDot = (x0*x_(2) + x1*x_(3) )/TOLERANCE;
+  } else {
+    rhoDot = (x0*x_(2) + x1*x_(3) )/(rho);
+  }
+
+  VectorXd z_pred(3);
+  z_pred << rho, phi, rhoDot;
+
+  VectorXd y = z - z_pred;
+
+  while ( (y(1) > M_PI) || (y(1) < -M_PI) ) {
+    if ( y(1) > M_PI) {
+      y(1) -= M_PI;
+    } else if (y(1) < -M_PI) {
+      y(1) += M_PI;
+    } else {
+      //do nothing
+    }
+  }
+  
+  MatrixXd S = H_*P_*(H_.transpose()) + R_;
+  MatrixXd K = P_*(H_.transpose()) * (S.inverse());
+
+  x_ = x_ + (K*y);
+  MatrixXd I = MatrixXd::Identity(x_.size(), x_.size());
+  P_ = (I - K*H_) * P_;
+   
+} 

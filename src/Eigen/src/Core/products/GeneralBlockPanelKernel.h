@@ -543,7 +543,7 @@ void gebp_kernel<LhsScalar,RhsScalar,Index,mr,nr,ConjugateLhs,ConjugateRhs>
     if(strideA==-1) strideA = depth;
     if(strideB==-1) strideB = depth;
     conj_helper<LhsScalar,RhsScalar,ConjugateLhs,ConjugateRhs> cj;
-//     conj_helper<LhsPacket,RhsPacket,ConjugateLhs,ConjugateRhs> pcj;
+    //     conj_helper<LhsPacket,RhsPacket,ConjugateLhs,ConjugateRhs> pcj;
     Index packet_cols = (cols/nr) * nr;
     const Index peeled_mc = (rows/mr)*mr;
     // FIXME:
@@ -568,14 +568,14 @@ void gebp_kernel<LhsScalar,RhsScalar,Index,mr,nr,ConjugateLhs,ConjugateRhs>
 
         // gets res block as register
         AccPacket C0, C1, C2, C3, C4, C5, C6, C7;
-                  traits.initAcc(C0);
-                  traits.initAcc(C1);
-        if(nr==4) traits.initAcc(C2);
-        if(nr==4) traits.initAcc(C3);
-                  traits.initAcc(C4);
-                  traits.initAcc(C5);
-        if(nr==4) traits.initAcc(C6);
-        if(nr==4) traits.initAcc(C7);
+	traits.initAcc(C0);
+	traits.initAcc(C1);
+	if(nr==4) {traits.initAcc(C2);}
+	if(nr==4) {traits.initAcc(C3);}
+	traits.initAcc(C4);
+	traits.initAcc(C5);
+        if(nr==4) {traits.initAcc(C6);}
+        if(nr==4) {traits.initAcc(C7);}
 
         ResScalar* r0 = &res[(j2+0)*resStride + i];
         ResScalar* r1 = r0 + resStride;
@@ -940,20 +940,20 @@ EIGEN_ASM_COMMENT("mybegin4");
         ResScalar* r2 = r1 + resStride;
         ResScalar* r3 = r2 + resStride;
 
-                  R0 = ploadu<ResPacket>(r0);
-                  R1 = ploadu<ResPacket>(r1);
-        if(nr==4) R2 = ploadu<ResPacket>(r2);
-        if(nr==4) R3 = ploadu<ResPacket>(r3);
+	R0 = ploadu<ResPacket>(r0);
+	R1 = ploadu<ResPacket>(r1);
+        if(nr==4) {R2 = ploadu<ResPacket>(r2);}
+        if(nr==4) {R3 = ploadu<ResPacket>(r3);}
 
-                  traits.acc(C0, alphav, R0);
-                  traits.acc(C1, alphav, R1);
-        if(nr==4) traits.acc(C2, alphav, R2);
-        if(nr==4) traits.acc(C3, alphav, R3);
+	traits.acc(C0, alphav, R0);
+	traits.acc(C1, alphav, R1);
+        if(nr==4) {traits.acc(C2, alphav, R2);}
+        if(nr==4) {traits.acc(C3, alphav, R3);}
 
-                  pstoreu(r0, R0);
-                  pstoreu(r1, R1);
-        if(nr==4) pstoreu(r2, R2);
-        if(nr==4) pstoreu(r3, R3);
+	pstoreu(r0, R0);
+	pstoreu(r1, R1);
+        if(nr==4) {pstoreu(r2, R2);}
+        if(nr==4) {pstoreu(r3, R3);}
       }
       for(Index i=peeled_mc2; i<rows; i++)
       {
@@ -996,10 +996,10 @@ EIGEN_ASM_COMMENT("mybegin4");
 
           blB += nr;
         }
-                  res[(j2+0)*resStride + i] += alpha*C0;
-                  res[(j2+1)*resStride + i] += alpha*C1;
-        if(nr==4) res[(j2+2)*resStride + i] += alpha*C2;
-        if(nr==4) res[(j2+3)*resStride + i] += alpha*C3;
+	res[(j2+0)*resStride + i] += alpha*C0;
+	res[(j2+1)*resStride + i] += alpha*C1;
+        if(nr==4) {res[(j2+2)*resStride + i] += alpha*C2;}
+        if(nr==4) {res[(j2+3)*resStride + i] += alpha*C3;}
       }
     }
     // process remaining rhs/res columns one at a time
@@ -1164,9 +1164,9 @@ EIGEN_DONT_INLINE void gemm_pack_lhs<Scalar, Index, Pack1, Pack2, StorageOrder, 
         for(; w<Pack1-3; w+=4)
         {
           Scalar a(cj(lhs(i+w+0, k))),
-                  b(cj(lhs(i+w+1, k))),
-                  c(cj(lhs(i+w+2, k))),
-                  d(cj(lhs(i+w+3, k)));
+	    b(cj(lhs(i+w+1, k))),
+	    c(cj(lhs(i+w+2, k))),
+	    d(cj(lhs(i+w+3, k)));
           blockA[count++] = a;
           blockA[count++] = b;
           blockA[count++] = c;
