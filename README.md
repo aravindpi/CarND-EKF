@@ -42,7 +42,7 @@ OUTPUT: values provided by the c++ program to the simulator
 
 
 
-*Data set 2*
+*Data Set 2*
 
 | Input | MSE    |
 | ----- | -------|
