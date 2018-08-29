@@ -8,6 +8,19 @@ This project involves the Term 2 Simulator which can be downloaded [here](https:
 ## Source Code
 The primary files are src/FusionEKF.cpp, src/FusionEKF.h, kalman_filter.cpp, kalman_filter.h, tools.cpp, and tools.h. The header files were provided as a starting point. I implemented the source (cpp) files.
 
+INPUT: values provided by the simulator to the c++ program
+
+["sensor_measurement"] => the measurement that the simulator observed (either lidar or radar)
+
+OUTPUT: values provided by the c++ program to the simulator
+
+["px"] <= kalman filter estimated position x
+["py"] <= kalman filter estimated position y
+["rmse_x"]
+["rmse_y"]
+["rmse_vx"]
+["rmse_vy"]
+
 ## Basic Build Instructions
 
 1. Clone this repo.
@@ -16,22 +29,28 @@ The primary files are src/FusionEKF.cpp, src/FusionEKF.h, kalman_filter.cpp, kal
    * On windows, you may need to run: `cmake .. -G "Unix Makefiles" && make`
 4. Run it: `./ExtendedKF `
 
-## Details
-INPUT: values provided by the simulator to the c++ program
+## Results
 
-["sensor_measurement"] => the measurement that the simulator observed (either lidar or radar)
+*Data Set 1*
+
+| Input | MSE    |
+| ----- | -------|
+|  px   | 0.0973 |
+|  py   | 0.0855 |
+|  vx   | 0.4638 |
+|  vy   | 0.4345 |
 
 
-OUTPUT: values provided by the c++ program to the simulator
 
-["estimate_x"] <= kalman filter estimated position x
-["estimate_y"] <= kalman filter estimated position y
-["rmse_x"]
-["rmse_y"]
-["rmse_vx"]
-["rmse_vy"]
+*Data set 2*
 
----
+| Input | MSE    |
+| ----- | -------|
+|  px   | 0.0729 |
+|  py   | 0.0968 |
+|  vx   | 0.4099 |
+|  vy   | 0.4892 |
+
 
 
 
